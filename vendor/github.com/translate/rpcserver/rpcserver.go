@@ -51,5 +51,6 @@ type rpcImpl struct {
 
 func (imp *rpcImpl) Translate(t string) (string, error) {
 
-	return imp.handler.Translate(t)
+	//return imp.handler.Translate(t)
+	return "123", nil
 }

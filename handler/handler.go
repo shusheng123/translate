@@ -9,7 +9,7 @@ type Handler struct {
 	Addr string
 }
 
-func (tanslate Handler) Translate(t string) (string, error) {
+func (tanslate *Handler) Translate(t string) (string, error) {
 	dst_str := "hello word!"
 	fmt.Printf("src: %s dst:%s", t, dst_str)
 
