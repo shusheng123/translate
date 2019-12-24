@@ -1,114 +1,55 @@
 package myconf
 
 import (
-	"bufio"
-	"errors"
 	"fmt"
-	"io"
-	"os"
-	"regexp"
-	"strings"
+	"git.qfpay.net/server/goqfpay/confparse"
+	"git.qfpay.net/server/goqfpay/gconfig"
 )
 
-type Myconf struct {
-	AddSfile string `translate:"IP"`
+type Mcnf struct {
+	IP   string `confpos:"rpc:addr" dtype:"base"`
+	PORT string `confpos:"rpc:port" dtype:"base"`
+
+	// RPC 配置
+	RPCServerAddr    string `confpos:"rpc:addr" dtype:"base"`
+	RPCServerPort    int    `confpos:"rpc:port" dtype:"base"`
+	RPCServerTimeout int    `confpos:"rpc:timeout" dtype:"base"`
+	EnableRPC        bool   `confpos:"rpc:enable_rpc" dtype:"base"`
+
+	// DB 配置
+	PaymentDbTk string `confpos:"db:qf_payment" dtype:"base"`
+	TokenFile   string `confpos:"db:tk_file" dtype:"base"`
+
+	// 日志配置
+	LogFile    string `confpos:"log:logfile" dtype:"base"`
+	LogFileErr string `confpos:"log:logfile_err" dtype:"base"`
+	LogDir     string `confpos:"log:logdir" dtype:"base"`
+	LogLevel   string `confpos:"log:loglevel" dtype:"base"`
+	LogStdOut  bool   `confpos:"log:logstdout" dtype:"base"`
+
+	// redis 配置
+	RedisAddr        []string `confpos:"redis:redis_url" item_split:"," dtype:"base"`
+	RedisTimeout     int      `confpos:"redis:timeout" dtype:"base"`
+	RedisMaxConnAct  int      `confpos:"redis:redis_pool_maxact_conn" dtype:"base"`
+	RedisMaxConnIdle int      `confpos:"redis:redis_pool_maxidle_conn" dtype:"base"`
+	PrintRedisLog    bool     `confpos:"redis:print_redis_log" dtype:"base"`
+	MsgStatTTL       int      `confpos:"redis:msg_stat_ttl" dtype:"base"`
 }
 
-var myconf *Myconf = new(Myconf)
+var Scnf *Mcnf = new(Mcnf)
 
-type Gconf struct {
-	File string
-	Gcf  map[string]map[string]string
-}
-
-func NewGconf(filename string) (*Gconf, error) {
-	gconf := new(Gconf)
-	gconf.File = filename
-	gconf.Gcf = make(map[string]map[string]string)
-
-	return gconf, nil
-
-}
-
-func ParseConf(filename string) (*Gconf, error) {
-
-	gconf := new(Gconf)
-	gconf.File = filename
-	gconf.Gcf = make(map[string]map[string]string)
-
-	fi, err := os.Open(filename)
+func Parseconf(filename string) error {
+	cfg := gconfig.NewGconf(filename)
+	err := cfg.GconfParse()
 	if err != nil {
-		fmt.Println("open conf file error")
-		return nil, nil
+		fmt.Printf("parse %s %s", filename, err.Error())
+		return err
 	}
-	readler := bufio.NewReader(fi)
-	mkey_reg := `^\[.*\]$`
-	ikey_reg := `^(.*)\=(.*)$`
-	mreg := regexp.MustCompile(mkey_reg)
-	ireg := regexp.MustCompile(ikey_reg)
-
-	var imap map[string]string
-
-	for {
-		line, _, err := readler.ReadLine()
-		if err == io.EOF {
-			break
-		}
-		sline := string(line)
-
-		if mreg.MatchString(sline) {
-			if len(sline) < 5 || sline[0] == '#' || sline[0] == ';' {
-				imap = nil
-				continue
-			}
-			item := sline[1 : len(sline)-1]
-			mk := strings.Trim(item, " ")
-			imap = make(map[string]string)
-			gconf.Gcf[mk] = imap
-
-		} else if ireg.MatchString(sline) {
-			if imap == nil {
-				continue
-			}
-			ik, iv, error := getkey(sline)
-			if error != nil {
-				fmt.Println("line error")
-				continue
-			}
-			imap[ik] = iv
-		} else {
-			//fmt.Println("sline:", sline)
-			//fmt.Println("no match continue")
-			continue
-		}
-
+	cp := confparse.CpaseNew(filename)
+	err = cp.CparseGo(Scnf, cfg)
+	if err != nil {
+		fmt.Printf(err.Error())
 	}
-	return gconf, nil
-
-}
-
-func getkey(line string) (string, string, error) {
-	if len(line) < 2 {
-		return "", "", errors.New(fmt.Sprintf("%s len %d error", line, len(line)))
-	}
-	index := strings.IndexAny(line, "=")
-	var ik string
-	var iv string
-	//like config f=
-	if len(line) == 2 {
-		//ik = gcf.StripBlank(line[0:index])
-		ik = strings.Trim(line[0:index], " ")
-		iv = ""
-	} else {
-		//ik = gcf.StripBlank(line[0:index])
-		ik = strings.Trim(line[0:index], " ")
-		//iv = gcf.StripBlank(line[index+1:])
-		iv = strings.Trim(line[index+1:], " ")
-	}
-	//注释掉的行
-	if ik[0] == '#' || ik[0] == ';' {
-		return "", "", nil
-	}
-	return ik, iv, nil
-
+	fmt.Printf("redis_url: %s\n", Scnf.RedisAddr[0])
+	return err
 }

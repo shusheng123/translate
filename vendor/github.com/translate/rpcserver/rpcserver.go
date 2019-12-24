@@ -6,8 +6,10 @@ import (
 	"git.qfpay.net/server/goqfpay/logger"
 	"github.com/translate/gen-go/translate"
 	"github.com/translate/handler"
+	"github.com/translate/myconf"
 	"os"
 	"sync"
+	"time"
 )
 
 type RPCserver struct {
@@ -23,10 +25,11 @@ func NewRPCserver(handler *handler.Handler) *RPCserver {
 }
 
 func (rpc *RPCserver) Start() {
-	logger.Info("server start")
+	rpcAddr := fmt.Sprintf("%s:%d", myconf.Scnf.RPCServerAddr, myconf.Scnf.RPCServerPort)
+	logger.Infof("rpc server start %s", rpcAddr)
 	transportFactory := thrift.NewTFramedTransportFactory(thrift.NewTTransportFactory())
 	protocolFactory := thrift.NewTBinaryProtocolFactoryDefault()
-	serverTransport, err := thrift.NewTServerSocket(rpc.handler.Addr)
+	serverTransport, err := thrift.NewTServerSocketTimeout(rpcAddr, time.Duration(myconf.Scnf.RPCServerTimeout)*time.Second)
 	if err != nil {
 		fmt.Println("Error!", err)
 		os.Exit(1)
@@ -37,7 +40,6 @@ func (rpc *RPCserver) Start() {
 	server := thrift.NewTSimpleServer4(processor, serverTransport, transportFactory, protocolFactory)
 	rpc.server = server
 	defer rpc.wg.Done()
-	fmt.Println("thrift server in", rpc.handler.Addr)
 	server.Serve()
 }
 
@@ -51,6 +53,5 @@ type rpcImpl struct {
 
 func (imp *rpcImpl) Translate(t string) (string, error) {
 
-	//return imp.handler.Translate(t)
-	return "123", nil
+	return imp.handler.Translate(t)
 }

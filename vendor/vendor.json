@@ -15,16 +15,34 @@
 			"revisionTime": "2019-04-19T15:25:24Z"
 		},
 		{
-			"checksumSHA1": "imDFor7npw9k69iEmdo2tV+9Smw=",
-			"path": "github.com/translate/myconf",
-			"revision": "2f710853d2c8dd8ac320f87c2498b3f30a427982",
-			"revisionTime": "2019-12-06T07:17:48Z"
+			"checksumSHA1": "G9Lwhm6CH6gDqM+WMSKJW4qoq8A=",
+			"path": "github.com/translate/cache",
+			"revision": "138e811d87f3a9aca0e61f42b49b42df4f44589c",
+			"revisionTime": "2019-12-09T07:19:28Z"
 		},
 		{
-			"checksumSHA1": "zUMjp71+s+unI0+2rCTuLm+R8hg=",
+			"checksumSHA1": "sJhtHu3vX+owAqM3yjeob2yh36k=",
+			"path": "github.com/translate/handler",
+			"revision": "138e811d87f3a9aca0e61f42b49b42df4f44589c",
+			"revisionTime": "2019-12-09T07:19:28Z"
+		},
+		{
+			"checksumSHA1": "dT2ztPduH6pyUowRJjjn09G93tk=",
+			"path": "github.com/translate/myconf",
+			"revision": "138e811d87f3a9aca0e61f42b49b42df4f44589c",
+			"revisionTime": "2019-12-09T07:19:28Z"
+		},
+		{
+			"checksumSHA1": "nUvFI7JeZc24Ri/rkwaqYmieGeo=",
 			"path": "github.com/translate/rpcserver",
-			"revision": "2f710853d2c8dd8ac320f87c2498b3f30a427982",
-			"revisionTime": "2019-12-06T07:17:48Z"
+			"revision": "138e811d87f3a9aca0e61f42b49b42df4f44589c",
+			"revisionTime": "2019-12-09T07:19:28Z"
+		},
+		{
+			"checksumSHA1": "2wco1SQDeW4VUijn8QaB/auvico=",
+			"path": "github.com/translate/sruntime",
+			"revision": "138e811d87f3a9aca0e61f42b49b42df4f44589c",
+			"revisionTime": "2019-12-09T07:19:28Z"
 		}
 	],
 	"rootPath": "github.com/translate"

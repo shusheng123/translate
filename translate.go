@@ -1,37 +1,46 @@
 package main
 
 import (
-	"flag"
-	"fmt"
 	"git.qfpay.net/server/goqfpay/logger"
 	"github.com/translate/handler"
 	"github.com/translate/myconf"
 	"github.com/translate/rpcserver"
+	"github.com/translate/sruntime"
+	"os"
 	"runtime"
 )
 
 func main() {
 
 	runtime.GOMAXPROCS(runtime.NumCPU())
-	conf_file := flag.String("conf_file", "conf_file", "please add conf file")
-	flag.Parse()
-	conf, err := myconf.ParseConf(*conf_file)
+
+	arg_num := len(os.Args)
+	if arg_num != 2 {
+		logger.Warn("input param error")
+		return
+	}
+	var filename = os.Args[1]
+	err := myconf.Parseconf(filename)
 	if err != nil {
-		fmt.Println("parse conf error")
 		return
 	}
 
-	logger.SetConsole(true)
-	logger.SetRollingDaily(conf.Gcf["log"]["logdir"],
-		conf.Gcf["log"]["logfile"],
-		conf.Gcf["log"]["logfile_err"])
-	loglevel, _ := logger.LoggerLevelIndex(conf.Gcf["log"]["loglevel"])
+	logger.SetConsole(myconf.Scnf.LogStdOut)
+	logger.SetRollingDaily(myconf.Scnf.LogDir, myconf.Scnf.LogFile, myconf.Scnf.LogFileErr)
+	loglevel, _ := logger.LoggerLevelIndex(myconf.Scnf.LogLevel)
 	logger.SetLevel(loglevel)
 
-	handler := &handler.Handler{
-		Memo: "Translate server",
-		Addr: "0.0.0.0:6000",
+	srunning.CreateRuntime()
+	logger.Infof("server start")
+
+	logger.Debugf("db token file: %s", myconf.Scnf.TokenFile)
+	err = srunning.Gsvr.LoadDb()
+
+	if err != nil {
+		os.Exit(1)
 	}
+
+	handler := &handler.Handler{}
 	server := rpcserver.NewRPCserver(handler)
 	server.Start()
 }
