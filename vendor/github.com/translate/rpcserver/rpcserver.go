@@ -39,19 +39,22 @@ func (rpc *RPCserver) Start() {
 
 	server := thrift.NewTSimpleServer4(processor, serverTransport, transportFactory, protocolFactory)
 	rpc.server = server
+	rpc.wg.Add(1)
 	defer rpc.wg.Done()
 	server.Serve()
+	logger.Infof("rpc server stop")
 }
 
 func (rpc *RPCserver) stop() {
 	rpc.server.Stop()
+	rpc.wg.Wait()
 }
 
 type rpcImpl struct {
 	handler *handler.Handler
 }
 
-func (imp *rpcImpl) Translate(t string) (string, error) {
+func (imp *rpcImpl) Translate(src_word string, lang string) (string, error) {
 
-	return imp.handler.Translate(t)
+	return imp.handler.Translate(src_word, lang)
 }

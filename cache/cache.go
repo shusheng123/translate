@@ -1,8 +1,7 @@
 package cache
 
 import (
-	//"fmt"
-	//"math/rand"
+	"fmt"
 	"sync"
 	"time"
 )
@@ -66,29 +65,7 @@ func (d *CacheDict) Put(key string, funcs func() interface{}, life time.Duration
 	t.val = funcs()
 	d.CachePools[key] = t
 
+	fmt.Println(t)
+
 	return nil
 }
-
-//func test() interface{} {
-
-//return rand.Intn(100)
-//}
-
-//func test1() interface{} {
-
-//return rand.Float64()
-//}
-//func main() {
-//cacheitem := NewCache()
-//cacheitem.Put("test", test, 2)
-//t := time.Now()
-//for {
-//m := cacheitem.Get("test")
-//if m == nil {
-//break
-//}
-//fmt.Println(m)
-//}
-//elapsed := time.Since(t)
-//fmt.Println("app elapsed:", elapsed)
-//}

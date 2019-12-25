@@ -136,7 +136,8 @@ func (p *ServerError) Error() string {
 type Translate interface {
   // Parameters:
   //  - SrcString
-  Translate(src_string string) (r string, err error)
+  //  - Lang
+  Translate(src_string string, lang string) (r string, err error)
 }
 
 type TranslateClient struct {
@@ -167,12 +168,13 @@ func NewTranslateClientProtocol(t thrift.TTransport, iprot thrift.TProtocol, opr
 
 // Parameters:
 //  - SrcString
-func (p *TranslateClient) Translate(src_string string) (r string, err error) {
-  if err = p.sendTranslate(src_string); err != nil { return }
+//  - Lang
+func (p *TranslateClient) Translate(src_string string, lang string) (r string, err error) {
+  if err = p.sendTranslate(src_string, lang); err != nil { return }
   return p.recvTranslate()
 }
 
-func (p *TranslateClient) sendTranslate(src_string string)(err error) {
+func (p *TranslateClient) sendTranslate(src_string string, lang string)(err error) {
   oprot := p.OutputProtocol
   if oprot == nil {
     oprot = p.ProtocolFactory.GetProtocol(p.Transport)
@@ -184,6 +186,7 @@ func (p *TranslateClient) sendTranslate(src_string string)(err error) {
   }
   args := TranslateTranslateArgs{
   SrcString : src_string,
+  Lang : lang,
   }
   if err = args.Write(oprot); err != nil {
       return
@@ -308,7 +311,7 @@ func (p *translateProcessorTranslate) Process(seqId int32, iprot, oprot thrift.T
   result := TranslateTranslateResult{}
 var retval string
   var err2 error
-  if retval, err2 = p.handler.Translate(args.SrcString); err2 != nil {
+  if retval, err2 = p.handler.Translate(args.SrcString, args.Lang); err2 != nil {
   switch v := err2.(type) {
     case *ServerError:
   result.E = v
@@ -346,8 +349,10 @@ var retval string
 
 // Attributes:
 //  - SrcString
+//  - Lang
 type TranslateTranslateArgs struct {
   SrcString string `thrift:"src_string,1" db:"src_string" json:"src_string"`
+  Lang string `thrift:"lang,2" db:"lang" json:"lang"`
 }
 
 func NewTranslateTranslateArgs() *TranslateTranslateArgs {
@@ -357,6 +362,10 @@ func NewTranslateTranslateArgs() *TranslateTranslateArgs {
 
 func (p *TranslateTranslateArgs) GetSrcString() string {
   return p.SrcString
+}
+
+func (p *TranslateTranslateArgs) GetLang() string {
+  return p.Lang
 }
 func (p *TranslateTranslateArgs) Read(iprot thrift.TProtocol) error {
   if _, err := iprot.ReadStructBegin(); err != nil {
@@ -373,6 +382,10 @@ func (p *TranslateTranslateArgs) Read(iprot thrift.TProtocol) error {
     switch fieldId {
     case 1:
       if err := p.ReadField1(iprot); err != nil {
+        return err
+      }
+    case 2:
+      if err := p.ReadField2(iprot); err != nil {
         return err
       }
     default:
@@ -399,11 +412,21 @@ func (p *TranslateTranslateArgs)  ReadField1(iprot thrift.TProtocol) error {
   return nil
 }
 
+func (p *TranslateTranslateArgs)  ReadField2(iprot thrift.TProtocol) error {
+  if v, err := iprot.ReadString(); err != nil {
+  return thrift.PrependError("error reading field 2: ", err)
+} else {
+  p.Lang = v
+}
+  return nil
+}
+
 func (p *TranslateTranslateArgs) Write(oprot thrift.TProtocol) error {
   if err := oprot.WriteStructBegin("translate_args"); err != nil {
     return thrift.PrependError(fmt.Sprintf("%T write struct begin error: ", p), err) }
   if p != nil {
     if err := p.writeField1(oprot); err != nil { return err }
+    if err := p.writeField2(oprot); err != nil { return err }
   }
   if err := oprot.WriteFieldStop(); err != nil {
     return thrift.PrependError("write field stop error: ", err) }
@@ -419,6 +442,16 @@ func (p *TranslateTranslateArgs) writeField1(oprot thrift.TProtocol) (err error)
   return thrift.PrependError(fmt.Sprintf("%T.src_string (1) field write error: ", p), err) }
   if err := oprot.WriteFieldEnd(); err != nil {
     return thrift.PrependError(fmt.Sprintf("%T write field end error 1:src_string: ", p), err) }
+  return err
+}
+
+func (p *TranslateTranslateArgs) writeField2(oprot thrift.TProtocol) (err error) {
+  if err := oprot.WriteFieldBegin("lang", thrift.STRING, 2); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field begin error 2:lang: ", p), err) }
+  if err := oprot.WriteString(string(p.Lang)); err != nil {
+  return thrift.PrependError(fmt.Sprintf("%T.lang (2) field write error: ", p), err) }
+  if err := oprot.WriteFieldEnd(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field end error 2:lang: ", p), err) }
   return err
 }
 

@@ -15,16 +15,16 @@
 			"revisionTime": "2019-04-19T15:25:24Z"
 		},
 		{
-			"checksumSHA1": "G9Lwhm6CH6gDqM+WMSKJW4qoq8A=",
+			"checksumSHA1": "VRgFi8YM+7ZOMV6pJ14176cDQCk=",
 			"path": "github.com/translate/cache",
-			"revision": "138e811d87f3a9aca0e61f42b49b42df4f44589c",
-			"revisionTime": "2019-12-09T07:19:28Z"
+			"revision": "2b348edecade9aedad9631d3a8b11d2aa42a999c",
+			"revisionTime": "2019-12-24T10:37:39Z"
 		},
 		{
-			"checksumSHA1": "sJhtHu3vX+owAqM3yjeob2yh36k=",
+			"checksumSHA1": "VYlA+2xYXPizRKB4nz/Gz9xLDhM=",
 			"path": "github.com/translate/handler",
-			"revision": "138e811d87f3a9aca0e61f42b49b42df4f44589c",
-			"revisionTime": "2019-12-09T07:19:28Z"
+			"revision": "2b348edecade9aedad9631d3a8b11d2aa42a999c",
+			"revisionTime": "2019-12-24T10:37:39Z"
 		},
 		{
 			"checksumSHA1": "dT2ztPduH6pyUowRJjjn09G93tk=",
@@ -33,10 +33,10 @@
 			"revisionTime": "2019-12-09T07:19:28Z"
 		},
 		{
-			"checksumSHA1": "nUvFI7JeZc24Ri/rkwaqYmieGeo=",
+			"checksumSHA1": "YHNhE2ghZYovoBeyUwwHSAcYI7o=",
 			"path": "github.com/translate/rpcserver",
-			"revision": "138e811d87f3a9aca0e61f42b49b42df4f44589c",
-			"revisionTime": "2019-12-09T07:19:28Z"
+			"revision": "2b348edecade9aedad9631d3a8b11d2aa42a999c",
+			"revisionTime": "2019-12-24T10:37:39Z"
 		},
 		{
 			"checksumSHA1": "2wco1SQDeW4VUijn8QaB/auvico=",

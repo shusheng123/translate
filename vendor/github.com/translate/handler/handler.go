@@ -1,76 +1,64 @@
 package handler
 
 import (
+	"fmt"
 	"git.qfpay.net/server/goqfpay/logger"
 	"github.com/translate/sruntime"
 )
 
 type Handler struct{}
 
-func (tanslate *Handler) Translate(t string) (string, error) {
+func (tanslate *Handler) Translate(src_word string, lang string) (string, error) {
 
-	qf_descript, check := check(t)
-	if !check {
-		logger.Info("not in descript")
-	} else {
-		t = qf_descript[t]
-	}
-
-	return t, nil
-}
-
-// 返回钱方描述中所有的数据
-func get_descript() (map[string]string, error) {
-	_sql := "SELECT name, descript from qf_descript"
-	db, ok := srunning.Gsvr.Dbs.Pools["qf_payment"]
-	if !ok {
-		return nil, nil
-	}
-
-	rows, err := db.Query(_sql)
-	if err != nil {
-		return nil, nil
-	}
-
-	columns, _ := rows.Columns()
-	var s map[string]string
-	s = make(map[string]string)
-
-	scanArgs := make([]interface{}, len(columns))
-	values := make([]interface{}, len(columns))
-	for i := range values {
-		scanArgs[i] = &values[i]
-	}
-
-	for rows.Next() {
-		err = rows.Scan(scanArgs...)
-		if err != nil {
-			return nil, nil
+	defer func() {
+		if err := recover(); err != nil {
+			logger.Infof("translate server error: %s", err)
 		}
-		record := make(map[string]string)
+	}()
 
-		for i, col := range values {
-			if col != nil {
-				//字段名 = 字段信息
-				record[columns[i]] = string(col.([]byte))
-				logger.Info(record)
-			}
-		}
-		s[record["name"]] = record["descript"]
+	qf_descript := get_descript()
+
+	// 判断是否有描述
+	v, ok := qf_descript[src_word]
+	if ok {
+		src_word = v
 	}
 
-	return s, nil
+	dst_word := get_translate(src_word, lang)
+
+	return dst_word, nil
 }
 
 // 检查是否在钱方描述中
-func check(t string) (map[string]string, bool) {
+func get_descript() map[string]string {
 
-	descript, err := get_descript()
-	if err != nil {
-		return descript, false
+	descript := srunning.Gsvr.Cache.Get("descript")
+
+	value, ok := descript.(map[string]string)
+	if !ok {
+		//return nil, false
+		panic("get descript error!!")
 	}
-	if _, ok := descript[t]; ok {
-		return descript, true
+
+	return value
+
+}
+
+// 获取翻译
+func get_translate(src_word string, lang string) string {
+
+	translate_info := srunning.Gsvr.Cache.Get("translate")
+	logger.Infof("translate_info:%s", translate_info)
+
+	value, ok := translate_info.(map[string]string)
+	if !ok {
+		panic("get translate_info error!!")
 	}
-	return descript, false
+	src_lang := fmt.Sprintf(src_word + "_" + lang)
+	logger.Infof("get translate info by key:%s", src_lang)
+	if val, ok := value[src_lang]; ok {
+		return val
+	}
+
+	return src_word
 }

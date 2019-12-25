@@ -40,6 +40,9 @@ func main() {
 		os.Exit(1)
 	}
 
+	srunning.Gsvr.Cache.Put("descript", handler.Get_descript, 20)
+	srunning.Gsvr.Cache.Put("translate", handler.Get_translate, 20)
+
 	handler := &handler.Handler{}
 	server := rpcserver.NewRPCserver(handler)
 	server.Start()

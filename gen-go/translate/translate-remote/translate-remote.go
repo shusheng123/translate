@@ -21,7 +21,7 @@ func Usage() {
   fmt.Fprintln(os.Stderr, "Usage of ", os.Args[0], " [-h host:port] [-u url] [-f[ramed]] function [arg1 [arg2...]]:")
   flag.PrintDefaults()
   fmt.Fprintln(os.Stderr, "\nFunctions:")
-  fmt.Fprintln(os.Stderr, "  string translate(string src_string)")
+  fmt.Fprintln(os.Stderr, "  string translate(string src_string, string lang)")
   fmt.Fprintln(os.Stderr)
   os.Exit(0)
 }
@@ -117,13 +117,15 @@ func main() {
   
   switch cmd {
   case "translate":
-    if flag.NArg() - 1 != 1 {
-      fmt.Fprintln(os.Stderr, "Translate requires 1 args")
+    if flag.NArg() - 1 != 2 {
+      fmt.Fprintln(os.Stderr, "Translate requires 2 args")
       flag.Usage()
     }
     argvalue0 := flag.Arg(1)
     value0 := argvalue0
-    fmt.Print(client.Translate(value0))
+    argvalue1 := flag.Arg(2)
+    value1 := argvalue1
+    fmt.Print(client.Translate(value0, value1))
     fmt.Print("\n")
     break
   case "":
