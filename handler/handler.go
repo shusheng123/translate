@@ -17,7 +17,6 @@ func (tanslate *Handler) Translate(src_word string, lang string) (string, error)
 	}()
 
 	qf_descript := get_descript()
-
 	// 判断是否有描述
 	v, ok := qf_descript[src_word]
 	if ok {
@@ -33,14 +32,10 @@ func (tanslate *Handler) Translate(src_word string, lang string) (string, error)
 func get_descript() map[string]string {
 
 	descript := srunning.Gsvr.Cache.Get("descript")
-
-	value, ok := descript.(map[string]string)
-	if !ok {
-		//return nil, false
-		panic("get descript error!!")
+	if value, ok := descript.(map[string]string); ok {
+		return value
 	}
-
-	return value
+	panic("get qfpay descript error!!")
 }
 
 // 获取翻译
@@ -55,6 +50,7 @@ func get_translate(src_word string, lang string) string {
 	}
 	src_lang := fmt.Sprintf(src_word + "_" + lang)
 	logger.Infof("get translate info by key:%s", src_lang)
+
 	if val, ok := value[src_lang]; ok {
 		return val
 	}
