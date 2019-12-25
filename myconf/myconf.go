@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"git.qfpay.net/server/goqfpay/confparse"
 	"git.qfpay.net/server/goqfpay/gconfig"
+	"time"
 )
 
 type Mcnf struct {
@@ -34,6 +35,9 @@ type Mcnf struct {
 	RedisMaxConnIdle int      `confpos:"redis:redis_pool_maxidle_conn" dtype:"base"`
 	PrintRedisLog    bool     `confpos:"redis:print_redis_log" dtype:"base"`
 	MsgStatTTL       int      `confpos:"redis:msg_stat_ttl" dtype:"base"`
+
+	// Cache 配置
+	CacheLife time.Duration `confpos:"cache:cache_life" dtype:"base"`
 }
 
 var Scnf *Mcnf = new(Mcnf)

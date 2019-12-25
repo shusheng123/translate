@@ -40,8 +40,8 @@ func main() {
 		os.Exit(1)
 	}
 
-	srunning.Gsvr.Cache.Put("descript", handler.Get_descript, 20)
-	srunning.Gsvr.Cache.Put("translate", handler.Get_translate, 20)
+	srunning.Gsvr.Cache.Put("descript", handler.Get_descript, myconf.Scnf.CacheLife)
+	srunning.Gsvr.Cache.Put("translate", handler.Get_translate, myconf.Scnf.CacheLife)
 
 	handler := &handler.Handler{}
 	server := rpcserver.NewRPCserver(handler)
