@@ -4,7 +4,6 @@
 .vscode/*
 nohup.out
 .idea
-/.idea
 tags
 /.vs
 /.vscode
