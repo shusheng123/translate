@@ -1,0 +1,15 @@
+*.pyc
+*.swp
+.ropeproject
+.vscode/*
+nohup.out
+.idea
+/.idea
+tags
+/.vs
+/.vscode
+/zylibrary
+/zylibrary.pyproj
+/zylibrary.py
+/zylibrary.sln
+/zylibrary.pyproj.user
